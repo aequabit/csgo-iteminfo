@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>CS:GO Inspect Parser</title>
+
+  <link rel="stylesheet" href="https://bootswatch.com/flatly/bootstrap.min.css">
+
+  <style>
+    .container {
+      margin-top: 2%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h3>Get item information from an inspect URL.</h3>
+    <div class="input-group">
+      <input type="text" class="form-control txt-inspect" placeholder="Inspect URL">
+      <span class="input-group-btn">
+        <button class="btn btn-default btn-submit" type="button">Get info</button>
+      </span>
+    </div>
+    <br>
+    <span class="lbl-response"></span>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script>
+    $('.btn-submit').click(() => {
+      if ($('.txt-inspect').val().length > 0) {
+        $.post('/api', {
+          inspect: $('.txt-inspect').val()
+        }, (response) => {
+          response = JSON.parse(response);
+          if (response.status == 'error') {
+            return $('.lbl-response').html(response.message);
+          }
+          var iteminfo = JSON.parse(response.message).iteminfo;
+          return $('.lbl-response').html('Float: ' + iteminfo.floatvalue + ' - Paint Index: ' + iteminfo.paintindex);
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>
