@@ -110,5 +110,45 @@ app.post('/api', (req, res) => {
     });
 });
 
+app.get('/api', (req, res) => {
+    /**
+     * If the inspect URL is not given.
+     */
+    if (!('inspect' in req.query)) {
+        return res.end('no_url');
+    }
+
+    /**
+     * Validate the inspect URL.
+     */
+    var groups = /([SM])(\d+)A(\d+)D(\d+)/.exec(req.query.inspect);
+    var s, m, a, d;
+    if (!groups) {
+        return res.end('invalid_url');
+    }
+
+    /**
+     * Do... stuff?
+     */
+    if (groups[1] === 'S') {
+        s = groups[2];
+        m = '0';
+    } else if (groups[1] === 'M') {
+        m = groups[2];
+        s = '0';
+    }
+
+    a = groups[3];
+    d = groups[4];
+
+    /**
+     * Request the item data.
+     */
+    csgoClient.itemDataRequest(s, a, d, m);
+    csgoClient.on('itemData', itemdata => {
+        return res.end(JSON.stringify(itemdata, null, 2));
+    });
+});
+
 app.listen(3000);
 console.log('[http] listening on %d', 3000);
